@@ -1,5 +1,5 @@
 {
-  "name": "express-mesto",
+  "name": "mesto",
   "version": "1.0.0",
   "description": "`/routes` — папка с файлами роутера  \r `/controllers` — папка с файлами контроллеров пользователя и карточки   \r `/models` — папка с файлами описания схем пользователя и карточки",
   "main": "app.js",
@@ -10,18 +10,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oldmilky/express-mesto.git"
+    "url": "git+https://github.com/Gregory-mcbit/express-mesto-gha.git"
   },
   "author": "McBit",
   "license": "",
   "bugs": {
-    "url": "https://github.com/oldmilky/express-mesto/issues"
+    "url": "https://github.com/Gregory-mcbit/express-mesto-gha/issues"
   },
-  "homepage": "https://github.com/oldmilky/express-mesto#readme",
+  "homepage": "https://github.com/Gregory-mcbit/express-mesto-gha#readme",
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "eslint-plugin-import": "^2.26.0"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -29,7 +30,7 @@
     "celebrate": "^15.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
-    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-import": "^2.26.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
