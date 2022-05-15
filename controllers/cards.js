@@ -2,6 +2,7 @@
 const Card = require('../models/card');
 
 const DataError = require('../errors/data_error'); // 400
+const NotFoundError = require('../errors/not_found_error'); // 404
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -29,27 +30,37 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const { _id } = req.params;
   Card.findById(_id)
-    .then((card) => {
-      if (JSON.stringify(req.user._id) === JSON.stringify(card.owner)) {
-        Card.findByIdAndRemove(_id)
-          .then((result) => {
-            res.send(result);
-          });
-      }
+    .orFail(() => new NotFoundError('Карточка не найдена'))
+    .then(() => {
+      Card.findByIdAndRemove(_id)
+        .then((result) => {
+          res.send(result);
+        });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Невалидный id ' });
+      } else if (err.message === 'NotFound') {
+        next(new NotFoundError('Передаваемые данныые невалидны.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params._id, {
     $addToSet: { likes: req.user._id },
   }, { new: true })
+    .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Данные карточки невалидны.'));
+      } else if (err.message === 'NotFound') {
+        next(new NotFoundError('Передаваемые данныые невалидны.'));
       } else {
         next(err);
       }
@@ -64,12 +75,15 @@ const dislikeCard = (req, res, next) => {
     },
     { new: true },
   )
+    .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         next(new DataError('Передаваемые данныые невалидны.'));
+      } else if (err.message === 'NotFound') {
+        next(new NotFoundError('Передаваемые данныые невалидны.'));
       } else {
         next(err);
       }

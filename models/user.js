@@ -7,19 +7,19 @@ const userSchema = new mongoose.Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Егоров Григорий',
+    default: '',
   },
   about: {
     type: String,
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Гений, миллиардер, филантроп',
+    default: '',
   },
   avatar: {
     type: String,
     required: false,
-    default: 'https://storage.carsmile.pl/uploads/2018/07/36.jpg',
+    default: '',
   },
 });
 
