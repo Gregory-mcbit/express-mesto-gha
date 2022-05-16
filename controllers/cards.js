@@ -20,7 +20,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(DataError('Данные карточки не валидны.'));
+        next(new DataError('Данные карточки не валидны.'));
       } else {
         next(err);
       }

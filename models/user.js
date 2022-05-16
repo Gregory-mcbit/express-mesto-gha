@@ -7,19 +7,16 @@ const userSchema = new mongoose.Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: '',
   },
   about: {
     type: String,
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: '',
   },
   avatar: {
     type: String,
     required: false,
-    default: '',
   },
 });
 
