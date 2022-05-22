@@ -5,6 +5,10 @@ const mongoose = require('mongoose');
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUser } = require('./controllers/users');
+const { login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+
+const { celebrate, Joi, errors } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
 const NotFoundError = require('./errors/not_found_error'); // 404
@@ -19,15 +23,25 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 // Middlewares
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: 'd76dbc61d64cfa22a69d8075',
-  };
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(/https?:\/\/(www\.)?[a-zA-Z\d\-.]{1,}\.[a-z]{1,6}([/a-z0-9\-._~:?#[\]@!$&'()*+,;=]*)/),
+  }),
+}), createUser);
 
-  next();
-});
+app.use(auth);
 
-app.post('/signup', createUser);
+app.use(errors());
 
 app.use('/', userRouter);
 app.use('/', cardsRouter);

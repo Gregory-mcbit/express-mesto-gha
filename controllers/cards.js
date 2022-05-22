@@ -2,6 +2,7 @@
 const Card = require('../models/card');
 
 const DataError = require('../errors/data_error'); // 400
+const AccessDeniedError = require('../errors/access_denied_error'); // 403
 const NotFoundError = require('../errors/not_found_error'); // 404
 
 const getCards = (req, res, next) => {
@@ -31,21 +32,17 @@ const deleteCard = (req, res, next) => {
   const { _id } = req.params;
   Card.findById(_id)
     .orFail(() => new NotFoundError('Карточка не найдена'))
-    .then(() => {
-      Card.findByIdAndRemove(_id)
-        .then((result) => {
-          res.send(result);
-        });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Невалидный id ' });
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Передаваемые данныые невалидны.'));
+    .then((card) => {
+      if (JSON.stringify(req.user._id) === JSON.stringify(card.owner)) {
+        Card.findByIdAndRemove(_id)
+          .then((result) => {
+            res.send(result);
+          });
       } else {
-        next(err);
+        throw new AccessDeniedError('Вы не обладаете достаточными правами для удаления карточки.');
       }
-    });
+    })
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
