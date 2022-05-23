@@ -22,8 +22,6 @@ const getUser = (req, res, next) => User.findById(req.params._id)
   .catch((err) => {
     if (err.name === 'CastError') {
       next(new DataError('Неверный запрос или данные.'));
-    } else if (err.message === 'NotFound') {
-      next(new NotFoundError('Передаваемые данныые невалидны.'));
     } else {
       next(err);
     }

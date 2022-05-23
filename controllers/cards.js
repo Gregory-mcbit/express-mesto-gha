@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-underscore-dangle */
 const Card = require('../models/card');
 
@@ -34,7 +35,7 @@ const deleteCard = (req, res, next) => {
     .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
       if (JSON.stringify(req.user._id) === JSON.stringify(card.owner)) {
-        Card.findByIdAndRemove(_id)
+        return Card.findByIdAndRemove(_id)
           .then((result) => {
             res.send(result);
           });
@@ -56,8 +57,6 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Данные карточки невалидны.'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Передаваемые данныые невалидны.'));
       } else {
         next(err);
       }
